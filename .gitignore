@@ -1,0 +1,52 @@
+# Local configuration and signing keys
+Local.props
+local.dist
+rabbit.snk
+rabbit-mock.snk
+
+# Build output
+[Bb]in/
+[Oo]bj/
+build/
+gensrc/
+.vs/
+.idea/
+
+# Test output
+TestResult.xml
+TestResults/
+
+# Visual Studio and ReSharper
+*.suo
+*.user
+*.orig
+*~
+UpgradeLog.XML
+_UpgradeReport_Files/
+[Rr]e[Ss]harper*/
+RabbitMQDotNetClient.sln.proj
+RabbitMQDotNetClient.sln.cache
+
+# Temporary and release files
+.bootstrap/
+tmp/
+Backup/
+scratch/
+release/
+commit/
+diff/
+
+# Generated documentation and Python files
+*.py
+*.pyc
+*.pyo
+__pycache__/
+/src/rabbitmq-dotnet-client/docs/pyle2-fcfcf7e/
+docs/pyle.log
+docs/pyle.pid
+docs/api-guide.pdf
+
+# Generated installer files
+/src/rabbitmq-dotnet-client/wix/dotnet-client-merge-module.wxs
+/src/rabbitmq-dotnet-client/wix/dotnet-client-product.wxs
+/src/rabbitmq-dotnet-client/wix/License.rtf
