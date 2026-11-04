@@ -1,3 +1,18 @@
+RabbitMQ.Client Bouncy Castle fork
+===================================
+
+This fork is distributed under the Apache License, Version 2.0. The upstream
+RabbitMQ.Client 3.4.3 sources are dual-licensed under Apache-2.0 and MPL-1.1;
+their original notices and the MPL text are preserved in the source and binary
+distributions.
+
+The binary distribution bundles the unmodified Bouncy Castle 1.8.10 assembly,
+which is licensed under the Bouncy Castle License (MIT). Its copyright and
+permission notice are included in THIRD-PARTY-NOTICES.txt and in the bundled
+Bouncy Castle License.html file.
+
+The complete Apache License 2.0 text follows.
+
                                  Apache License
                            Version 2.0, January 2004
                         http://www.apache.org/licenses/

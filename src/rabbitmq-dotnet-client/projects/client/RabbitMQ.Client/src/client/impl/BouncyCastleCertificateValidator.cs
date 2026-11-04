@@ -299,7 +299,7 @@ namespace RabbitMQ.Client.Impl
             return firstLabel.Length > 0 && firstLabel.IndexOf('.') < 0;
         }
 
-        private static string NormalizeDnsName(string name)
+        internal static string NormalizeDnsName(string name)
         {
             string normalized = name.Trim();
             if (normalized.EndsWith(".", StringComparison.Ordinal))

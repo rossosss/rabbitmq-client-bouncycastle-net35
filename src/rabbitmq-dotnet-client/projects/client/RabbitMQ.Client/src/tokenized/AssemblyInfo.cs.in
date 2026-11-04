@@ -37,6 +37,8 @@
 //  The Initial Developer of the Original Code is GoPivotal, Inc.
 //  Copyright (c) 2007-2014 GoPivotal, Inc.  All rights reserved.
 //---------------------------------------------------------------------------
+// Modified for internal TLS tests and alpha package version metadata.
+//---------------------------------------------------------------------------
 
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -56,4 +58,6 @@ using System.Runtime.InteropServices;
 [assembly: Guid("32a32ed8-c871-45ad-86b3-f50723a7434b")]
 
 [assembly: AssemblyVersion("${PropAssemblyVersion}")]
+[assembly: AssemblyInformationalVersion("${PropPackageVersion}")]
+[assembly: InternalsVisibleTo("unit-tests")]
 

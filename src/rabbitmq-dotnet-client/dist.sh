@@ -39,6 +39,8 @@
 ##  The Initial Developer of the Original Code is GoPivotal, Inc.
 ##  Copyright (c) 2007-2014 GoPivotal, Inc.  All rights reserved.
 ##---------------------------------------------------------------------------
+## Modified to propagate package version metadata.
+##---------------------------------------------------------------------------
 
 ### Fail on any non-zero return
 set -e
@@ -226,6 +228,7 @@ function gen-props {
         USING_MONO="false"
     fi
     sed -e "s:@VERSION@:$ASSEMBLY_VSN:g" \
+        -e "s:@PACKAGE_VERSION@:$RABBIT_VSN:g" \
         -e "s:@KEYFILE@:$KEYFILE:g" \
         -e "s:@USINGMONO@:$USING_MONO:g" \
     < $1 > $2

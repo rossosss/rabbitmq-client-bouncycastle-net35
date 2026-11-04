@@ -12,7 +12,10 @@ namespace RabbitMQ.Client.Impl
         internal BouncyCastleTlsClient(SslOption sslOption, string serverName)
         {
             m_sslOption = sslOption;
-            m_serverName = serverName;
+            IPAddress address;
+            m_serverName = IPAddress.TryParse(serverName.Trim('[', ']'), out address)
+                ? serverName
+                : BouncyCastleCertificateValidator.NormalizeDnsName(serverName);
         }
 
         public override ProtocolVersion ClientVersion

@@ -37,7 +37,7 @@
 //  The Initial Developer of the Original Code is GoPivotal, Inc.
 //  Copyright (c) 2007-2014 GoPivotal, Inc.  All rights reserved.
 //---------------------------------------------------------------------------
-// Modified to configure the CA trust store used by Bouncy Castle TLS.
+// Modified to configure Bouncy Castle TLS trust and explicitly skip unavailable integration tests.
 //---------------------------------------------------------------------------
 
 using NUnit.Framework;
@@ -72,7 +72,7 @@ public class TestSsl {
     [Test]
     public void TestServerVerifiedIgnoringNameMismatch() {
         string sslDir = Environment.GetEnvironmentVariable("SSL_CERTS_DIR");
-        if (null == sslDir) return;
+        if (String.IsNullOrEmpty(sslDir)) Assert.Ignore("SSL_CERTS_DIR is not configured.");
 
         ConnectionFactory cf = new ConnectionFactory();
         cf.Ssl.ServerName = "*";
@@ -85,7 +85,7 @@ public class TestSsl {
     [Test]
     public void TestServerVerified() {
         string sslDir = Environment.GetEnvironmentVariable("SSL_CERTS_DIR");
-        if (null == sslDir) return;
+        if (String.IsNullOrEmpty(sslDir)) Assert.Ignore("SSL_CERTS_DIR is not configured.");
 
         ConnectionFactory cf = new ConnectionFactory();
         cf.Ssl.ServerName = System.Net.Dns.GetHostName();
@@ -97,7 +97,7 @@ public class TestSsl {
     [Test]
     public void TestClientAndServerVerified() {
         string sslDir = Environment.GetEnvironmentVariable("SSL_CERTS_DIR");
-        if (null == sslDir) return;
+        if (String.IsNullOrEmpty(sslDir)) Assert.Ignore("SSL_CERTS_DIR is not configured.");
 
         ConnectionFactory cf = new ConnectionFactory();
         cf.Ssl.ServerName = System.Net.Dns.GetHostName();

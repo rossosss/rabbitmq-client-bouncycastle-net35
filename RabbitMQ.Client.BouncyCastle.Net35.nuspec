@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
+  <metadata>
+    <id>RabbitMQ.Client.BouncyCastle.Net35</id>
+    <version>$version$</version>
+    <authors>rossosss</authors>
+    <owners>rossosss</owners>
+    <description>RabbitMQ.Client 3.4.3 with managed Bouncy Castle TLS 1.2 for .NET Framework 3.5 and Windows XP.</description>
+    <copyright>Copyright (c) 2007-2014 GoPivotal, Inc. See third-party notices.</copyright>
+    <tags>rabbitmq amqp net35 tls bouncycastle windows-xp</tags>
+    <language>en-US</language>
+    <projectUrl>https://github.com/rossosss/rabbitmq-client-bouncycastle-net35</projectUrl>
+    <repository url="https://github.com/rossosss/rabbitmq-client-bouncycastle-net35.git" />
+    <license type="expression">Apache-2.0</license>
+    <readme>docs\README.md</readme>
+    <releaseNotes>Initial alpha with managed TLS 1.2, certificate validation, SNI, and RSA/ECDSA client credentials. Bouncy Castle 1.8.10 is bundled. Not for production use.</releaseNotes>
+    <dependencies>
+      <group targetFramework="net35" />
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="src\rabbitmq-dotnet-client\projects\client\RabbitMQ.Client\build\bin\RabbitMQ.Client.dll" target="lib\net35" />
+    <file src="src\rabbitmq-dotnet-client\projects\client\RabbitMQ.Client\build\bin\RabbitMQ.Client.pdb" target="lib\net35" />
+    <file src="src\rabbitmq-dotnet-client\projects\client\RabbitMQ.Client\build\bin\RabbitMQ.Client.xml" target="lib\net35" />
+    <file src="packages\BouncyCastle.1.8.10\lib\net20\BouncyCastle.Crypto.dll" target="lib\net35" />
+    <file src="README.md" target="docs\" />
+    <file src="THIRD-PARTY-NOTICES.txt" target="docs\" />
+    <file src="LICENSE*" target="licenses\rabbitmq-client-bouncycastle\" />
+    <file src="src\rabbitmq-dotnet-client\LICENSE*" target="licenses\rabbitmq\" />
+    <file src="packages\BouncyCastle.1.8.10\License.html" target="licenses\bouncycastle\" />
+  </files>
+</package>

@@ -6,6 +6,7 @@
     <PropLaunchExe Condition="'$(PropUsingMono)' == 'true'">mono </PropLaunchExe>
     <PropBuildWcf Condition="'$(PropUsingMono)' != 'true'">true</PropBuildWcf>
     <PropAssemblyVersion>@VERSION@</PropAssemblyVersion>
+    <PropPackageVersion>@PACKAGE_VERSION@</PropPackageVersion>
     <PropKeyfile>$(MSBuildProjectDirectory)\..\..\..\@KEYFILE@</PropKeyfile>
   </PropertyGroup>
 </Project>

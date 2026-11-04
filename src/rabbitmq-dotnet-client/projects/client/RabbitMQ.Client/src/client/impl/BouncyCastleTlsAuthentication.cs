@@ -47,6 +47,9 @@ namespace RabbitMQ.Client.Impl
                 store.Load(input, password);
             }
 
+            bool foundPrivateKey = false;
+            bool foundCertificate = false;
+
             foreach (string alias in store.Aliases)
             {
                 if (!store.IsKeyEntry(alias))
@@ -54,6 +57,7 @@ namespace RabbitMQ.Client.Impl
                     continue;
                 }
 
+                foundPrivateKey = true;
                 AsymmetricKeyParameter privateKey = store.GetKey(alias).Key;
                 X509CertificateEntry[] entries = store.GetCertificateChain(alias);
                 if (entries == null)
@@ -63,7 +67,21 @@ namespace RabbitMQ.Client.Impl
                 }
                 if (entries == null || entries.Length == 0)
                 {
-                    throw new IOException("The client PKCS#12 file does not contain a certificate for the private key.");
+                    continue;
+                }
+
+                foundCertificate = true;
+                if (!MatchesCertificateType(certificateRequest.CertificateTypes, privateKey) ||
+                    !MatchesCertificateAuthorities(certificateRequest.CertificateAuthorities, entries))
+                {
+                    continue;
+                }
+
+                SignatureAndHashAlgorithm signatureAlgorithm = SelectSignatureAlgorithm(
+                    certificateRequest.SupportedSignatureAlgorithms, privateKey);
+                if (signatureAlgorithm == null)
+                {
+                    continue;
                 }
 
                 X509CertificateStructure[] structures = new X509CertificateStructure[entries.Length];
@@ -72,17 +90,60 @@ namespace RabbitMQ.Client.Impl
                     structures[i] = entries[i].Certificate.CertificateStructure;
                 }
 
-                SignatureAndHashAlgorithm signatureAlgorithm = SelectSignatureAlgorithm(
-                    certificateRequest.SupportedSignatureAlgorithms, privateKey);
-                if (signatureAlgorithm == null)
-                {
-                    throw new IOException("The server did not offer a signature algorithm compatible with the client private key.");
-                }
-
                 return new DefaultTlsSignerCredentials(m_context, new TlsCertificate(structures), privateKey, signatureAlgorithm);
             }
 
-            throw new IOException("The client PKCS#12 file does not contain a private key.");
+            if (!foundPrivateKey)
+            {
+                throw new IOException("The client PKCS#12 file does not contain a private key.");
+            }
+            if (!foundCertificate)
+            {
+                throw new IOException("The client PKCS#12 file does not contain a certificate for the private key.");
+            }
+            return null;
+        }
+
+        private static bool MatchesCertificateType(byte[] certificateTypes, AsymmetricKeyParameter privateKey)
+        {
+            if (certificateTypes == null || certificateTypes.Length == 0)
+            {
+                return true;
+            }
+
+            foreach (byte certificateType in certificateTypes)
+            {
+                if ((privateKey is RsaKeyParameters && certificateType == ClientCertificateType.rsa_sign) ||
+                    (privateKey is DsaPrivateKeyParameters && certificateType == ClientCertificateType.dss_sign) ||
+                    (privateKey is ECPrivateKeyParameters && certificateType == ClientCertificateType.ecdsa_sign))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private static bool MatchesCertificateAuthorities(IList certificateAuthorities,
+            X509CertificateEntry[] entries)
+        {
+            if (certificateAuthorities == null || certificateAuthorities.Count == 0)
+            {
+                return true;
+            }
+
+            foreach (X509Name authority in certificateAuthorities)
+            {
+                foreach (X509CertificateEntry entry in entries)
+                {
+                    if (authority.Equivalent(entry.Certificate.IssuerDN))
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
         }
 
         private static SignatureAndHashAlgorithm SelectSignatureAlgorithm(IList supportedAlgorithms,

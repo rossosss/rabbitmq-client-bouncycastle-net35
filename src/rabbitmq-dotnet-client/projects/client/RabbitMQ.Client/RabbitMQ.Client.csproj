@@ -55,6 +55,7 @@
     <Detokenized Include="$(AssemblyInfoDetok)"><Link>properties\$(AssemblyInfoBaseName)</Link></Detokenized>
     <Compile Include="$(AssemblyInfoDetok)"><Visible>false</Visible></Compile>
     <Tokens Include="PropAssemblyVersion"><ReplacementValue>$(PropAssemblyVersion)</ReplacementValue><Visible>false</Visible></Tokens>
+    <Tokens Include="PropPackageVersion"><ReplacementValue>$(PropPackageVersion)</ReplacementValue><Visible>false</Visible></Tokens>
   </ItemGroup>
   <Target Name="Detokenize" DependsOnTargets="CreateGensrcDir" Inputs="@(Tokenized); $(LocalPropsFile)" Outputs="@(Detokenized)">
     <Delete Files="@(Detokenized)" />

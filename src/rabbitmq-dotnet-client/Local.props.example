@@ -3,6 +3,7 @@
   <PropertyGroup>
     <PropTargetFramework>v3.5</PropTargetFramework>
     <PropAssemblyVersion>0.0.0.0</PropAssemblyVersion>
+    <PropPackageVersion>0.0.0.0-alpha.1</PropPackageVersion>
     <PropUsingMono>false</PropUsingMono>
     
     <!-- Assembly strong naming - $(MSBuildProjectDirectory) is the RabbitMQ.Client project directory -->

@@ -78,6 +78,10 @@
   
   <!-- Visual Studio generated reference and file list -->
   <ItemGroup>
+    <Reference Include="BouncyCastle.Crypto, Version=1.8.10.0, Culture=neutral, PublicKeyToken=0e99375e54769942, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\..\packages\BouncyCastle.1.8.10\lib\net20\BouncyCastle.Crypto.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="nunit.framework, Version=2.4.3.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\lib\nunit\nunit.framework.dll</HintPath>

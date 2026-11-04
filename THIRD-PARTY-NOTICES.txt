@@ -1,0 +1,57 @@
+THIRD-PARTY NOTICES
+===================
+
+RabbitMQ.Client 3.4.3
+---------------------
+
+Origin: RabbitMQ .NET client sources, tag rabbitmq_v3_4_3.
+Upstream project: https://github.com/rabbitmq/rabbitmq-dotnet-client
+Copyright: Copyright (c) 2007-2014 GoPivotal, Inc., as stated in the sources.
+
+The upstream source is dual-licensed under the Apache License 2.0 and the
+Mozilla Public License 1.1. This fork distributes its RabbitMQ.Client derivative
+under the Apache License 2.0. Original copyright and license notices are
+preserved. The upstream license summary and MPL-1.1 text are included under
+licenses/rabbitmq in the binary package. The Apache License 2.0 text is included
+in the repository and package under licenses/rabbitmq-client-bouncycastle.
+
+Bouncy Castle C# 1.8.10
+-----------------------
+
+Origin: official, unmodified BouncyCastle.Crypto.dll for CLR 2.0 / .NET 3.5.
+Project: https://www.bouncycastle.org/csharp/
+Source project: https://github.com/bcgit/bc-csharp
+
+The Bouncy Castle License (MIT):
+
+Copyright (c) 2000-2021 The Legion of the Bouncy Castle Inc.
+(https://www.bouncycastle.org)
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files (the "Software"), to deal in
+the Software without restriction, including without limitation the rights to
+use, copy, modify, merge, publish, distribute, sub license, and/or sell copies
+of the Software, and to permit persons to whom the Software is furnished to do
+so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+The original License.html is included under licenses/bouncycastle in the binary
+package.
+
+Vendored build and test tools
+-----------------------------
+
+The upstream source tree also contains MSBuild Community Tasks and NUnit build
+and test tooling. Their original files and available notices remain under
+src/rabbitmq-dotnet-client/lib. These tools are not included in the client
+NuGet package or runtime distribution.
