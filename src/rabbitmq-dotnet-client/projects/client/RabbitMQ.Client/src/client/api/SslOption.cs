@@ -37,6 +37,8 @@
 //  The Initial Developer of the Original Code is GoPivotal, Inc.
 //  Copyright (c) 2007-2014 GoPivotal, Inc.  All rights reserved.
 //---------------------------------------------------------------------------
+// Modified with settings required by the Bouncy Castle TLS implementation.
+//---------------------------------------------------------------------------
 
 using System;
 using System.Net.Security;
@@ -64,8 +66,8 @@ namespace RabbitMQ.Client
 
         private SslProtocols m_version = SslProtocols.Tls;
 
-        ///<summary>Retrieve or set the Ssl protocol version
-        ///</summary>
+        ///<summary>Legacy protocol setting retained for source compatibility.
+        ///The Bouncy Castle transport negotiates TLS 1.2 only.</summary>
         public SslProtocols Version
         {
             get { return m_version; }
@@ -118,12 +120,22 @@ namespace RabbitMQ.Client
 
         private string m_serverName;
 
-        ///<summary>Retrieve or set server's Canonical Name. This MUST match the CN
-        ///on the Certificate else the SSL connection will fail</summary>
+        ///<summary>Retrieve or set the expected DNS name or IP address of the server.
+        ///The value is also used for SNI when it contains a DNS name.</summary>
         public string ServerName
         {
             get { return m_serverName; }
             set { m_serverName = value; }
+        }
+
+        private string m_trustStorePath = "";
+
+        ///<summary>Retrieve or set the path to a PEM or DER file containing trusted CA certificates.
+        ///This is required for default server certificate validation.</summary>
+        public string TrustStorePath
+        {
+            get { return m_trustStorePath; }
+            set { m_trustStorePath = value; }
         }
 
         private SslPolicyErrors m_acceptablePolicyErrors = SslPolicyErrors.None;
@@ -144,8 +156,8 @@ namespace RabbitMQ.Client
         public RemoteCertificateValidationCallback CertificateValidationCallback { get; set; }
 
         /// <summary>
-        /// An optional client specified SSL certificate selection callback.  If this is not specified,
-        /// the first valid certificate found will be used.
+        /// Legacy callback retained for source compatibility. Bouncy Castle TLS does not support it;
+        /// use CertPath and CertPassphrase to select a client PKCS#12 credential.
         /// </summary>
         public LocalCertificateSelectionCallback CertificateSelectionCallback { get; set; }
 

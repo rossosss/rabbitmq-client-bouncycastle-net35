@@ -37,81 +37,53 @@
 //  The Initial Developer of the Original Code is GoPivotal, Inc.
 //  Copyright (c) 2007-2014 GoPivotal, Inc.  All rights reserved.
 //---------------------------------------------------------------------------
+//
+// Modified to use Bouncy Castle for TLS transport and certificate validation.
+//---------------------------------------------------------------------------
 
 using System;
 using System.IO;
-using System.Net.Security;
-using System.Security.Authentication;
-using System.Security.Cryptography.X509Certificates;
+using Org.BouncyCastle.Crypto.Tls;
+using Org.BouncyCastle.Security;
 using RabbitMQ.Client.Impl;
 
 namespace RabbitMQ.Client
 {
-
-    ///<summary>Represents an SslHelper which does the actual heavy lifting
-    ///to set up an SSL connection, using the config options in an SslOption
-    ///to make things cleaner</summary>
+    ///<summary>Creates Bouncy Castle TLS streams for RabbitMQ connections.</summary>
     public class SslHelper
     {
-
-        private SslOption m_sslOption;
-
-        private X509Certificate CertificateSelectionCallback(object sender,
-                                                             string targetHost,
-                                                             X509CertificateCollection localCertificates,
-                                                             X509Certificate remoteCertificate,
-                                                             string[] acceptableIssuers)
-        {
-            if (acceptableIssuers != null && acceptableIssuers.Length > 0 &&
-                localCertificates != null && localCertificates.Count > 0)
-                {
-                    foreach (X509Certificate certificate in localCertificates)
-                        {
-                            if (Array.IndexOf(acceptableIssuers, certificate.Issuer) != -1)
-                                return certificate;
-                        }
-                }
-            if (localCertificates != null && localCertificates.Count > 0)
-                return localCertificates[0];
-
-            return null;
-        }
-
-        private bool CertificateValidationCallback(object sender,
-                                                   X509Certificate certificate,
-                                                   X509Chain chain,
-                                                   SslPolicyErrors sslPolicyErrors)
-        {
-            return (sslPolicyErrors & ~m_sslOption.AcceptablePolicyErrors) == SslPolicyErrors.None;
-        }
-
-        ///<summary>Upgrade a Tcp stream to an Ssl stream using the SSL options
-        ///provided</summary>
+        ///<summary>Upgrade a TCP stream to TLS using the supplied options.</summary>
         public static Stream TcpUpgrade(Stream tcpStream, SslOption sslOption)
         {
-            SslHelper helper = new SslHelper(sslOption);
-
-            RemoteCertificateValidationCallback remoteCertValidator =
-              sslOption.CertificateValidationCallback ?? new RemoteCertificateValidationCallback(helper.CertificateValidationCallback);
-            LocalCertificateSelectionCallback localCertSelector =
-              sslOption.CertificateSelectionCallback ?? new LocalCertificateSelectionCallback(helper.CertificateSelectionCallback);
-
-            SslStream sslStream = new SslStream(tcpStream, false,
-                                                remoteCertValidator,
-                                                localCertSelector);
-
-            sslStream.AuthenticateAsClient(sslOption.ServerName,
-                                           sslOption.Certs,
-                                           sslOption.Version,
-                                           false);
-
-            return sslStream;
+            return TcpUpgrade(tcpStream, sslOption, sslOption.ServerName);
         }
 
-        private SslHelper(SslOption sslOption)
+        ///<summary>Upgrade a TCP stream to TLS using the supplied options and host name.</summary>
+        public static Stream TcpUpgrade(Stream tcpStream, SslOption sslOption, string hostName)
         {
-            m_sslOption = sslOption;
-        }
+            if (tcpStream == null)
+            {
+                throw new ArgumentNullException("tcpStream");
+            }
+            if (sslOption == null)
+            {
+                throw new ArgumentNullException("sslOption");
+            }
+            if (sslOption.CertificateSelectionCallback != null)
+            {
+                throw new NotSupportedException("CertificateSelectionCallback is not supported by Bouncy Castle TLS; use CertPath with a PKCS#12 file.");
+            }
 
+            string serverName = String.IsNullOrEmpty(sslOption.ServerName) ? hostName : sslOption.ServerName;
+            if (String.IsNullOrEmpty(serverName))
+            {
+                throw new ArgumentException("SslOption.ServerName or a broker host name is required for TLS.", "sslOption");
+            }
+
+            BouncyCastleTlsClient client = new BouncyCastleTlsClient(sslOption, serverName);
+            TlsClientProtocol protocol = new TlsClientProtocol(tcpStream, new SecureRandom());
+            protocol.Connect(client);
+            return protocol.Stream;
+        }
     }
 }

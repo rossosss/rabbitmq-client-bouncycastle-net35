@@ -54,6 +54,9 @@ namespace RabbitMQ.Client.SmokeTest
             {
                 factory.Ssl.Enabled = true;
                 factory.Ssl.ServerName = options.ServerName ?? options.HostName;
+                factory.Ssl.TrustStorePath = options.TrustStorePath;
+                factory.Ssl.CertPath = options.ClientCertPath ?? "";
+                factory.Ssl.CertPassphrase = options.ClientCertPassword;
                 if (options.Port == 0)
                 {
                     factory.Port = 5671;
@@ -61,6 +64,12 @@ namespace RabbitMQ.Client.SmokeTest
             }
 
             Console.WriteLine("Connecting to " + options.HostName + ":" + factory.Port + " (TLS: " + options.UseTls + ")");
+
+            if (options.HandshakeOnly)
+            {
+                RunTlsHandshake(options, factory);
+                return;
+            }
 
             using (IConnection connection = factory.CreateConnection())
             using (IModel channel = connection.CreateModel())
@@ -90,16 +99,32 @@ namespace RabbitMQ.Client.SmokeTest
             }
         }
 
+        private static void RunTlsHandshake(Options options, ConnectionFactory factory)
+        {
+            using (System.Net.Sockets.TcpClient client = new System.Net.Sockets.TcpClient())
+            {
+                client.Connect(options.HostName, factory.Port);
+                using (System.IO.Stream stream = SslHelper.TcpUpgrade(client.GetStream(), factory.Ssl, options.HostName))
+                {
+                    Console.WriteLine("PASS: TLS handshake and certificate validation succeeded");
+                }
+            }
+        }
+
         private static void PrintUsage()
         {
             Console.WriteLine("Usage: RabbitMQ.Client.SmokeTest.exe [options]");
-            Console.WriteLine("  --host <name>         Broker host (default: localhost)");
-            Console.WriteLine("  --port <number>       Broker port (default: 5672, or 5671 with TLS)");
-            Console.WriteLine("  --vhost <name>        Virtual host (default: /)");
-            Console.WriteLine("  --user <name>         User name (default: guest)");
-            Console.WriteLine("  --password <value>    Password (default: guest)");
-            Console.WriteLine("  --tls                 Enable TLS");
-            Console.WriteLine("  --server-name <name>  TLS server name (default: broker host)");
+            Console.WriteLine("  --host <name>                 Broker host (default: localhost)");
+            Console.WriteLine("  --port <number>               Broker port (default: 5672, or 5671 with TLS)");
+            Console.WriteLine("  --vhost <name>                Virtual host (default: /)");
+            Console.WriteLine("  --user <name>                 User name (default: guest)");
+            Console.WriteLine("  --password <value>            Password (default: guest)");
+            Console.WriteLine("  --tls                         Enable TLS");
+            Console.WriteLine("  --server-name <name>          TLS server name (default: broker host)");
+            Console.WriteLine("  --ca <path>                   Trusted CA certificate in PEM or DER format");
+            Console.WriteLine("  --client-cert <path>          Client certificate and private key in PKCS#12 format");
+            Console.WriteLine("  --client-cert-password <value>  Client PKCS#12 password");
+            Console.WriteLine("  --handshake-only             Stop after the TLS handshake (requires --tls)");
         }
 
         private sealed class Options
@@ -111,6 +136,10 @@ namespace RabbitMQ.Client.SmokeTest
             internal string Password = "guest";
             internal bool UseTls;
             internal string ServerName;
+            internal string TrustStorePath;
+            internal string ClientCertPath;
+            internal string ClientCertPassword;
+            internal bool HandshakeOnly;
 
             internal static Options Parse(string[] args)
             {
@@ -146,9 +175,26 @@ namespace RabbitMQ.Client.SmokeTest
                         case "--server-name":
                             options.ServerName = ReadValue(args, ref i);
                             break;
+                        case "--ca":
+                            options.TrustStorePath = ReadValue(args, ref i);
+                            break;
+                        case "--client-cert":
+                            options.ClientCertPath = ReadValue(args, ref i);
+                            break;
+                        case "--client-cert-password":
+                            options.ClientCertPassword = ReadValue(args, ref i);
+                            break;
+                        case "--handshake-only":
+                            options.HandshakeOnly = true;
+                            break;
                         default:
                             throw new ArgumentException("Unknown option: " + args[i]);
                     }
+                }
+
+                if (options.HandshakeOnly && !options.UseTls)
+                {
+                    throw new ArgumentException("--handshake-only requires --tls.");
                 }
 
                 return options;

@@ -37,6 +37,8 @@
 //  The Initial Developer of the Original Code is GoPivotal, Inc.
 //  Copyright (c) 2007-2014 GoPivotal, Inc.  All rights reserved.
 //---------------------------------------------------------------------------
+// Modified to pass the broker host name to the Bouncy Castle TLS helper.
+//---------------------------------------------------------------------------
 
 using System;
 using System.IO;
@@ -102,7 +104,7 @@ namespace RabbitMQ.Client.Impl
             {
                 try
                 {
-                    netstream = SslHelper.TcpUpgrade(netstream, endpoint.Ssl);
+                    netstream = SslHelper.TcpUpgrade(netstream, endpoint.Ssl, endpoint.HostName);
                 }
                 catch (Exception)
                 {

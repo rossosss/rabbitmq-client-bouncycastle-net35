@@ -37,6 +37,8 @@
 //  The Initial Developer of the Original Code is GoPivotal, Inc.
 //  Copyright (c) 2007-2014 GoPivotal, Inc.  All rights reserved.
 //---------------------------------------------------------------------------
+// Modified to configure the CA trust store used by Bouncy Castle TLS.
+//---------------------------------------------------------------------------
 
 using NUnit.Framework;
 using System;
@@ -75,6 +77,7 @@ public class TestSsl {
         ConnectionFactory cf = new ConnectionFactory();
         cf.Ssl.ServerName = "*";
         cf.Ssl.AcceptablePolicyErrors = SslPolicyErrors.RemoteCertificateNameMismatch;
+        cf.Ssl.TrustStorePath = sslDir + "/testca/cacert.cer";
         cf.Ssl.Enabled = true;
         SendReceive(cf);
     }
@@ -86,6 +89,7 @@ public class TestSsl {
 
         ConnectionFactory cf = new ConnectionFactory();
         cf.Ssl.ServerName = System.Net.Dns.GetHostName();
+        cf.Ssl.TrustStorePath = sslDir + "/testca/cacert.cer";
         cf.Ssl.Enabled = true;
         SendReceive(cf);
     }
@@ -102,6 +106,7 @@ public class TestSsl {
         string p12Password = Environment.GetEnvironmentVariable("PASSWORD");
         Assert.IsNotNull(p12Password, "missing PASSWORD env var");
         cf.Ssl.CertPassphrase = p12Password;
+        cf.Ssl.TrustStorePath = sslDir + "/testca/cacert.cer";
         cf.Ssl.Enabled = true;
         SendReceive(cf);
     }
